@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Üyelik Yönetim Sistemi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body class="bg-gray-50">
+    <!-- Login Section -->
+    <div
+      id="loginSection"
+      class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
+    >
+      <div class="max-w-md w-full space-y-8">
+        <div>
+          <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Üyelik Yönetim Sistemi
+          </h2>
+          <p class="mt-2 text-center text-sm text-gray-600">Yönetici Girişi</p>
+        </div>
+        <form id="loginForm" class="mt-8 space-y-6">
+          <div id="loginError" class="hidden rounded-md bg-red-50 p-4">
+            <p class="text-sm text-red-800"></p>
+          </div>
+          <div class="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label for="username" class="sr-only">Kullanıcı Adı</label>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                required
+                class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Kullanıcı Adı"
+              />
+            </div>
+            <div>
+              <label for="password" class="sr-only">Şifre</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Şifre"
+              />
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              Giriş Yap
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboardSection" class="hidden min-h-screen">
+      <!-- Navigation -->
+      <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between h-16">
+            <div class="flex items-center">
+              <h1 class="text-xl font-bold text-gray-900">
+                Üyelik Yönetim Sistemi
+              </h1>
+            </div>
+            <div class="flex items-center space-x-4">
+              <span id="adminUsername" class="text-sm text-gray-600"></span>
+              <button
+                id="logoutBtn"
+                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                Çıkış Yap
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Tabs -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        <div class="border-b border-gray-200">
+          <nav class="-mb-px flex space-x-8">
+            <button
+              data-tab="members"
+              class="tab-button border-blue-500 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+            >
+              Üyeler
+            </button>
+            <button
+              data-tab="packages"
+              class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+            >
+              Paketler
+            </button>
+            <button
+              data-tab="memberships"
+              class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+            >
+              Üyelikler
+            </button>
+            <button
+              data-tab="statistics"
+              class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+            >
+              İstatistikler
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Members Tab -->
+        <div id="membersTab" class="tab-content">
+          <div class="bg-white shadow rounded-lg p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">
+              Yeni Üye Ekle
+            </h2>
+            <form
+              id="addMemberForm"
+              class="grid grid-cols-1 gap-4 sm:grid-cols-3"
+            >
+              <input
+                type="text"
+                id="memberFirstName"
+                placeholder="Ad"
+                required
+                class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+              />
+              <input
+                type="text"
+                id="memberLastName"
+                placeholder="Soyad"
+                required
+                class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+              />
+              <input
+                type="email"
+                id="memberEmail"
+                placeholder="E-posta"
+                required
+                class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+              />
+              <button
+                type="submit"
+                class="sm:col-span-3 inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Üye Ekle
+              </button>
+            </form>
+          </div>
+
+          <div class="bg-white shadow rounded-lg overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+              <h2 class="text-lg font-semibold text-gray-900">Üye Listesi</h2>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      ID
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Ad
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Soyad
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      E-posta
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Kayıt Tarihi
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      İşlemler
+                    </th>
+                  </tr>
+                </thead>
+                <tbody
+                  id="membersTableBody"
+                  class="bg-white divide-y divide-gray-200"
+                >
+                  <!-- Dynamic content -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Packages Tab -->
+        <div id="packagesTab" class="tab-content hidden">
+          <div class="bg-white shadow rounded-lg overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+              <h2 class="text-lg font-semibold text-gray-900">Paket Listesi</h2>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      ID
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Paket Adı
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Süre (Gün)
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Fiyat (TL)
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      İşlemler
+                    </th>
+                  </tr>
+                </thead>
+                <tbody
+                  id="packagesTableBody"
+                  class="bg-white divide-y divide-gray-200"
+                >
+                  <!-- Dynamic content -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Memberships Tab -->
+        <div id="membershipsTab" class="tab-content hidden">
+          <div class="bg-white shadow rounded-lg p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Paket Ata</h2>
+            <form
+              id="assignPackageForm"
+              class="grid grid-cols-1 gap-4 sm:grid-cols-4"
+            >
+              <select
+                id="assignMemberId"
+                required
+                class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+              >
+                <option value="">Üye Seç</option>
+              </select>
+              <select
+                id="assignPackageId"
+                required
+                class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+              >
+                <option value="">Paket Seç</option>
+              </select>
+              <input
+                type="date"
+                id="assignStartDate"
+                required
+                class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+              />
+              <button
+                type="submit"
+                class="inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Paket Ata
+              </button>
+            </form>
+          </div>
+
+          <!-- Sub-tabs for active/expired -->
+          <div class="mb-4">
+            <div class="border-b border-gray-200">
+              <nav class="-mb-px flex space-x-8">
+                <button
+                  data-subtab="active"
+                  class="subtab-button border-blue-500 text-blue-600 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm"
+                >
+                  Aktif Üyelikler
+                </button>
+                <button
+                  data-subtab="expired"
+                  class="subtab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm"
+                >
+                  Süresi Dolmuş Üyelikler
+                </button>
+              </nav>
+            </div>
+          </div>
+
+          <!-- Active Memberships -->
+          <div
+            id="activeMembershipsTab"
+            class="subtab-content bg-white shadow rounded-lg overflow-hidden"
+          >
+            <div class="px-6 py-4 border-b border-gray-200">
+              <h2 class="text-lg font-semibold text-gray-900">
+                Aktif Üyelikler
+              </h2>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Üye
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Paket
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Başlangıç
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Bitiş
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Durum
+                    </th>
+                  </tr>
+                </thead>
+                <tbody
+                  id="activeMembershipsTableBody"
+                  class="bg-white divide-y divide-gray-200"
+                >
+                  <!-- Dynamic content -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Expired Memberships -->
+          <div
+            id="expiredMembershipsTab"
+            class="subtab-content hidden bg-white shadow rounded-lg overflow-hidden"
+          >
+            <div class="px-6 py-4 border-b border-gray-200">
+              <h2 class="text-lg font-semibold text-gray-900">
+                Süresi Dolmuş Üyelikler
+              </h2>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Üye
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Paket
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Başlangıç
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Bitiş
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Durum
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      İşlemler
+                    </th>
+                  </tr>
+                </thead>
+                <tbody
+                  id="expiredMembershipsTableBody"
+                  class="bg-white divide-y divide-gray-200"
+                >
+                  <!-- Dynamic content -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Statistics Tab -->
+        <div id="statisticsTab" class="tab-content hidden">
+          <!-- Summary Cards -->
+          <div
+            class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6"
+          >
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+              <div class="p-5">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0">
+                    <svg
+                      class="h-6 w-6 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div class="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt class="text-sm font-medium text-gray-500 truncate">
+                        Toplam Üye
+                      </dt>
+                      <dd>
+                        <div
+                          id="totalMembers"
+                          class="text-2xl font-semibold text-gray-900"
+                        >
+                          0
+                        </div>
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+              <div class="p-5">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0">
+                    <svg
+                      class="h-6 w-6 text-green-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div class="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt class="text-sm font-medium text-gray-500 truncate">
+                        Aktif Üyelik
+                      </dt>
+                      <dd>
+                        <div
+                          id="activeMembershipsCount"
+                          class="text-2xl font-semibold text-gray-900"
+                        >
+                          0
+                        </div>
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+              <div class="p-5">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0">
+                    <svg
+                      class="h-6 w-6 text-red-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div class="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt class="text-sm font-medium text-gray-500 truncate">
+                        Süresi Dolmuş
+                      </dt>
+                      <dd>
+                        <div
+                          id="expiredMembershipsCount"
+                          class="text-2xl font-semibold text-gray-900"
+                        >
+                          0
+                        </div>
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+              <div class="p-5">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0">
+                    <svg
+                      class="h-6 w-6 text-gray-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                      />
+                    </svg>
+                  </div>
+                  <div class="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt class="text-sm font-medium text-gray-500 truncate">
+                        Toplam Üyelik
+                      </dt>
+                      <dd>
+                        <div
+                          id="totalMembershipsCount"
+                          class="text-2xl font-semibold text-gray-900"
+                        >
+                          0
+                        </div>
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts -->
+          <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 mb-6">
+            <!-- Membership by Package Chart -->
+            <div class="bg-white shadow rounded-lg p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                Paketlere Göre Üyelik Dağılımı
+              </h3>
+              <div class="relative h-64">
+                <canvas id="packageChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Membership by Status Chart -->
+            <div class="bg-white shadow rounded-lg p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                Duruma Göre Üyelik Dağılımı
+              </h3>
+              <div class="relative h-64">
+                <canvas id="statusChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Monthly Statistics -->
+          <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <!-- Monthly Member Registrations -->
+            <div class="bg-white shadow rounded-lg p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                Aylık Yeni Üye Kayıtları (Son 6 Ay)
+              </h3>
+              <div class="relative h-64">
+                <canvas id="monthlyRegistrationsChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Monthly Membership Starts -->
+            <div class="bg-white shadow rounded-lg p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                Aylık Yeni Üyelikler (Son 6 Ay)
+              </h3>
+              <div class="relative h-64">
+                <canvas id="monthlyMembershipsChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div
+      id="toast"
+      class="hidden fixed bottom-4 right-4 px-6 py-4 rounded-lg shadow-lg transition-all z-50"
+    >
+      <p id="toastMessage" class="text-sm font-medium"></p>
+    </div>
+
+    <!-- Edit Package Modal -->
+    <div
+      id="editPackageModal"
+      class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+    >
+      <div
+        class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
+      >
+        <div class="mt-3">
+          <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">
+            Paket Düzenle
+          </h3>
+          <form id="editPackageForm" class="space-y-4">
+            <input type="hidden" id="editPackageId" />
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Paket Adı</label
+              >
+              <input
+                type="text"
+                id="editPackageName"
+                required
+                class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Süre (Gün)</label
+              >
+              <input
+                type="number"
+                id="editPackageDuration"
+                required
+                min="1"
+                class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Fiyat (TL)</label
+              >
+              <input
+                type="number"
+                id="editPackagePrice"
+                required
+                min="0"
+                step="0.01"
+                class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border"
+              />
+            </div>
+            <div class="flex justify-end space-x-3 mt-5">
+              <button
+                type="button"
+                id="cancelEditPackage"
+                class="px-4 py-2 bg-gray-200 text-gray-800 text-sm font-medium rounded-md hover:bg-gray-300"
+              >
+                İptal
+              </button>
+              <button
+                type="submit"
+                class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
+              >
+                Kaydet
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+  </body>
+</html>
