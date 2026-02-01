@@ -2,14 +2,18 @@ const { Pool } = require("pg");
 
 // PostgreSQL connection configuration
 const pool = new Pool({
-  host: process.env.DB_HOST || "dpg-d5uug2ffte5s73cb0tng-a",
+  host: process.env.DB_HOST,
   port: process.env.DB_PORT || 5432,
-  user: process.env.DB_USER || "membership_db_xeu9_user",
-  password: process.env.DB_PASSWORD || "moIfhCfdg2gCXP68cFKRLlfpvBLXHyik",
-  database: process.env.DB_NAME || "membership_db_xeu9",
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   max: 20, // Maximum number of clients in the pool
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
+  connectionTimeoutMillis: 10000, // 10 saniye timeout (Render için daha uzun)
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : false,
 });
 
 // Test connection on startup
@@ -18,8 +22,9 @@ pool.on("connect", () => {
 });
 
 pool.on("error", (err) => {
-  console.error("PostgreSQL bağlantı hatası:", err);
-  process.exit(-1);
+  console.error("PostgreSQL pool hatası:", err);
+  // UYARI: Uygulamayı kapatmıyoruz! Sunucu çalışmaya devam edecek.
+  // Database bağlantısı tekrar denenecek.
 });
 
 module.exports = pool;

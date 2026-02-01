@@ -12,6 +12,28 @@
 - Cross-origin istekleri için CORS middleware eklendi
 - Frontend farklı bir domaindeyse çalışabilir
 
+## Render Build ve Start Komutları
+
+Render Dashboard'da Web Service ayarlarınız:
+
+### Build Command
+
+```bash
+npm install
+```
+
+### Start Command
+
+```bash
+npm start
+```
+
+### Health Check Path
+
+```
+/api/health
+```
+
 ## Render'da Environment Variables Ayarları
 
 Render dashboard'unuzda şu environment variable'ları **mutlaka** ayarlayın:

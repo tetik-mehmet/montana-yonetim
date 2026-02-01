@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: montana-yonetim
+    env: node
+    region: frankfurt # veya oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DB_HOST
+        fromDatabase:
+          name: montana-postgres
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: montana-postgres
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: montana-postgres
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: montana-postgres
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: montana-postgres
+          property: database
+
+databases:
+  - name: montana-postgres
+    databaseName: membership_db
+    user: membership_user
+    plan: free

@@ -113,26 +113,37 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Test database connection before starting server
-pool.query("SELECT NOW()", (err, res) => {
-  if (err) {
-    console.error("PostgreSQL bağlantı hatası:", err);
-    console.log("Sunucu başlatıldı ancak veritabanına bağlanılamadı!");
-    console.log("Lütfen PostgreSQL ayarlarını kontrol edin.");
-  } else {
-    console.log("PostgreSQL bağlantısı başarılı:", res.rows[0].now);
-  }
-});
+// Test database connection (non-blocking)
+pool
+  .query("SELECT NOW()")
+  .then((res) => {
+    console.log("✅ PostgreSQL bağlantısı başarılı:", res.rows[0].now);
+  })
+  .catch((err) => {
+    console.error("❌ PostgreSQL bağlantı hatası:", err.message);
+    console.log("⚠️ Sunucu çalışıyor ancak veritabanına bağlanılamadı!");
+    console.log(
+      "🔧 Lütfen PostgreSQL environment variables'ları kontrol edin:",
+    );
+    console.log("   - DB_HOST");
+    console.log("   - DB_PORT");
+    console.log("   - DB_USER");
+    console.log("   - DB_PASSWORD");
+    console.log("   - DB_NAME");
+  });
 
 // Start server
-app.listen(PORT, () => {
+const HOST = process.env.NODE_ENV === "production" ? "0.0.0.0" : "localhost";
+
+app.listen(PORT, HOST, () => {
   console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║  Üyelik Yönetim Sistemi                                  ║
-║  Server: http://localhost:${PORT}                           ║
+║  Server: http://${HOST}:${PORT}                           ║
 ║  Environment: ${process.env.NODE_ENV || "development"}                              ║
 ╚═══════════════════════════════════════════════════════════╝
   `);
+  console.log(`✅ Sunucu ${HOST}:${PORT} adresinde başlatıldı`);
 });
 
 module.exports = app;
