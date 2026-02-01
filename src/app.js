@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
+const pgSession = require("connect-pg-simple")(session);
 const path = require("path");
 
 // Import routes
@@ -16,21 +17,56 @@ const pool = require("./db/pool");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// CORS Configuration (if frontend is on different domain)
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",")
+  : ["http://localhost:3000"];
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (
+    allowedOrigins.includes(origin) ||
+    process.env.NODE_ENV === "development"
+  ) {
+    res.header("Access-Control-Allow-Origin", origin || "*");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    );
+    res.header(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, OPTIONS",
+    );
+  }
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Session configuration
+// Session configuration with PostgreSQL store
 app.use(
   session({
+    store: new pgSession({
+      pool: pool, // PostgreSQL connection pool
+      tableName: "session", // Session tablosu adı
+      createTableIfMissing: true, // Tablo yoksa otomatik oluştur
+    }),
     secret: process.env.SESSION_SECRET || "your-secret-key-change-this",
     resave: false,
     saveUninitialized: false,
+    proxy: true, // Render proxy'si için gerekli
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // HTTPS only in production
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Production'da cross-site için 'none'
     },
   }),
 );
